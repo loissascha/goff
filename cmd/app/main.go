@@ -24,6 +24,7 @@ func main() {
 	router.Page(http.MethodGet, "/", homePage())
 
 	mux := http.NewServeMux()
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("public/assets"))))
 	mux.Handle("/", router)
 
 	server := &http.Server{
