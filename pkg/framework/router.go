@@ -17,7 +17,8 @@ type Context struct {
 type Handler func(*Context) (Page, error)
 
 type Router struct {
-	routes []route
+	routes   []route
+	renderer *Renderer
 }
 
 type route struct {
@@ -27,9 +28,10 @@ type route struct {
 	page    Handler
 }
 
-func NewRouter() *Router {
+func NewRouter(renderer *Renderer) *Router {
 	return &Router{
-		routes: []route{},
+		routes:   []route{},
+		renderer: renderer,
 	}
 }
 
@@ -50,7 +52,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			r.handleError(w, err)
 			return
 		}
-		page.render(w)
+		r.renderer.Render(w, page)
 		return
 	}
 	r.handleError(w, errNotFound)
@@ -58,10 +60,10 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (r *Router) handleError(w http.ResponseWriter, err error) {
 	if errors.Is(err, errNotFound) {
-		Page{Status: http.StatusNotFound, Title: "Not found", Template: "error.html", Data: "The page was not found."}.render(w)
+		r.renderer.Render(w, Page{Status: http.StatusNotFound, Title: "Not found", Template: "error.html", Data: "The page was not found."})
 		return
 	}
-	Page{Status: http.StatusInternalServerError, Title: "Server error", Template: "error.html", Data: err.Error()}.render(w)
+	r.renderer.Render(w, Page{Status: http.StatusInternalServerError, Title: "Server error", Template: "error.html", Data: err.Error()})
 }
 
 func splitPattern(pattern string) []string {

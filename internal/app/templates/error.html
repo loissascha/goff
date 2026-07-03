@@ -1,0 +1,10 @@
+{{ define "error.html" }}
+{{ template "page_start" . }}
+<section>
+	<div>Something went wrong</div>
+	<h1>{{ .Title }}</h1>
+	<p>{{ .Data }}</p>
+	<a class="button" href="/">Go home</a>
+</section>
+{{ template "page_end" . }}
+{{ end }}

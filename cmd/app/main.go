@@ -12,7 +12,15 @@ import (
 func main() {
 	addr := env("ADDR", ":8118")
 
-	router := framework.NewRouter()
+	renderer, err := framework.NewRenderer(framework.RendererConfig{
+		LayoutGlob:   "internal/app/layouts/*.html",
+		TemplateGlob: "internal/app/templates/*.html",
+	})
+	if err != nil {
+		log.Fatalf("load templates: %v", err)
+	}
+
+	router := framework.NewRouter(renderer)
 	router.Page(http.MethodGet, "/", homePage())
 
 	mux := http.NewServeMux()
