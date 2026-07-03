@@ -5,13 +5,22 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/loissascha/goff/pkg/framework"
 )
 
 func main() {
 	addr := env("ADDR", ":8118")
 
+	router := framework.NewRouter()
+	router.Page(http.MethodGet, "/", homePage())
+
+	mux := http.NewServeMux()
+	mux.Handle("/", router)
+
 	server := &http.Server{
 		Addr:              addr,
+		Handler:           mux,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
@@ -27,4 +36,14 @@ func env(key string, fallback string) string {
 		return fallback
 	}
 	return v
+}
+
+func homePage() framework.Handler {
+	return func(ctx *framework.Context) (framework.Page, error) {
+		return framework.Page{
+			Title:       "Test Page",
+			Description: "Test Page Description",
+			Template:    "home.html",
+		}, nil
+	}
 }
