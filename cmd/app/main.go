@@ -13,8 +13,8 @@ func main() {
 	addr := env("ADDR", ":8118")
 
 	renderer, err := framework.NewRenderer(framework.RendererConfig{
-		LayoutGlob:   "internal/app/layouts/*.html",
-		TemplateGlob: "internal/app/templates/*.html",
+		LayoutGlob:   "internal/pages/layouts/*.html",
+		TemplateGlob: "internal/pages/templates/*.html",
 	})
 	if err != nil {
 		log.Fatalf("load templates: %v", err)
